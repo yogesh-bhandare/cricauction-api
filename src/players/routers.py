@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Depends, HTTPException, status
-from .schemas import PlayerResponse, PlayerRequest
+from .schemas import PlayerRequest, PlayerResponse
 from sqlalchemy.orm import Session
 from ..db.connect import get_db
 from ..db.models import Player

@@ -1,8 +1,8 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional, List
-from ..players.schemas import PlayerResponseModel
-from ..teams.schemas import TeamResponseSchema
-from ..auctions.schemas import AuctionResponseSchema
+from ..players.schemas import PlayerResponse
+from ..teams.schemas import TeamResponse
+from ..auctions.schemas import AuctionResponse
 
 class PlayerSoldRequest(BaseModel):
     sold_price: int
@@ -13,13 +13,13 @@ class PlayerSoldRequest(BaseModel):
 
 class TeamSummaryResponse(PlayerSoldRequest):
     id: int
-    players: Optional[PlayerResponseModel] = None
-    teams: Optional[TeamResponseSchema] = None
-    auction: Optional[AuctionResponseSchema] = None
+    players: Optional[PlayerResponse] = None
+    teams: Optional[TeamResponse] = None
+    auction: Optional[AuctionResponse] = None
 
     model_config = ConfigDict(from_attributes=True)
 
 class TeamPlayerSummary(BaseModel):
-    team: TeamResponseSchema
-    players: List[PlayerResponseModel]
+    team: TeamResponse
+    players: List[PlayerResponse]
     model_config = ConfigDict(from_attributes=True)
