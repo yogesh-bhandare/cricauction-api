@@ -1,16 +1,16 @@
 from pydantic import BaseModel, ConfigDict
 from typing import Optional
 
-class TeamCreateRequestSchema(BaseModel):
+class TeamCreateRequest(BaseModel):
     name: str
     auction_id: int
     user_id: Optional[int] = None
 
-class TeamUpdateRequest(TeamCreateRequestSchema):
+class TeamUpdateRequest(TeamCreateRequest):
     remaining_purse: int = None
 
 
-class TeamResponseSchema(TeamCreateRequestSchema):
+class TeamResponse(TeamCreateRequest):
     id: int
     remaining_purse: int
     model_config = ConfigDict(from_attributes=True)

@@ -28,6 +28,7 @@ class Player(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
+    img_url = Column(String, nullable=True)
     origin = Column(Enum("Overseas", "Native", name="player_origin"), nullable=False, default="Native")
     player_type = Column(Enum("Batsman", "Bowler","All Rounder", "Wicket Keeper", name="player_type"), nullable=False)
     points = Column(Integer, nullable=False) # points for final results and player stats
@@ -85,7 +86,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     username = Column(String, nullable=False)
     password = Column(String, nullable=False)
-    role = Column(String, nullable=False)
+    role = Column(Enum("admin", "user", "team", name="role"), nullable=False)
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
 
