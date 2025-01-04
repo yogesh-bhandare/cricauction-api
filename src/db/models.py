@@ -10,12 +10,16 @@ class Auction(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     name = Column(String, nullable=False)
     date = Column(DateTime, nullable=False)
-    purse_amt = Column(Integer, nullable=False)
-    min_bid = Column(Integer, nullable=True)
-    bid_increase_by = Column(Integer, nullable=False)
+    purse_amt = Column(Integer, nullable=False) # The amt that teams will be allocated for bid
+    min_bid = Column(Integer, nullable=True) # if player bid is smaller then this then this bid will be considered or starting bid
+    bid_increase_by = Column(Integer, nullable=False) # increase bid amt
+    bid_amt = Column(Integer, nullable=True) # If this bid amt exceeds the new bid amt will get assigned
+    new_bid_increase_by = Column(Integer, nullable=True) # this is the new bid amt
     created_at = Column(DateTime, nullable=False, default=func.now())
     updated_at = Column(DateTime, nullable=False, onupdate=func.now(), default=func.now())
 
+    # Foreign Keys
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
 
 # Players Model
 class Player(Base):
@@ -26,9 +30,9 @@ class Player(Base):
     last_name = Column(String, nullable=False)
     origin = Column(Enum("Overseas", "Native", name="player_origin"), nullable=False, default="Native")
     player_type = Column(Enum("Batsman", "Bowler","All Rounder", "Wicket Keeper", name="player_type"), nullable=False)
-    points = Column(Integer, nullable=False)
-    base_price = Column(Integer, nullable=False)
-    is_sold = Column(Boolean, nullable=False, default=False)  
+    points = Column(Integer, nullable=False) # points for final results and player stats
+    base_price = Column(Integer, nullable=False) # starting bid price
+    is_sold = Column(Boolean, nullable=False, default=False) # status to get players sold details
     sold_price = Column(Integer, nullable=True)  
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
@@ -50,10 +54,9 @@ class Team(Base):
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
 
     # Foreign Key
+    user_id = Column(Integer, ForeignKey("users.id", ondelete="SET NULL"), nullable=True) # for team login route
     auction_id = Column(Integer, ForeignKey("auctions.id", ondelete="CASCADE"))
 
-    # Relationships
-    players = relationship("Player")
     
 
 # Summary Model
@@ -61,14 +64,14 @@ class Summary(Base):
     __tablename__ = "summary"
 
     id = Column(Integer, primary_key=True, nullable=False)
-    sold_price = Column(Integer, nullable=False)
+    sold_price = Column(Integer, nullable=False) # for security storing player sold_price
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
 
     # Foreign Keys
-    auction_id = Column(Integer, ForeignKey("auctions.id", ondelete="CASCADE"))
-    player_id = Column(Integer, ForeignKey("players.id", ondelete="SET NULL"))
-    team_id = Column(Integer, ForeignKey("teams.id", ondelete="SET NULL"))
+    auction_id = Column(Integer, ForeignKey("auctions.id", ondelete="CASCADE")) # which auction
+    player_id = Column(Integer, ForeignKey("players.id", ondelete="SET NULL")) # which player sold
+    team_id = Column(Integer, ForeignKey("teams.id", ondelete="SET NULL")) # which team bought
 
     # Relationship
     players = relationship("Player")
@@ -82,6 +85,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     username = Column(String, nullable=False)
     password = Column(String, nullable=False)
-    role = Column(Enum("user", "team","admin", name="player_type"), nullable=False, default="user")
+    role = Column(String, nullable=False)
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
+

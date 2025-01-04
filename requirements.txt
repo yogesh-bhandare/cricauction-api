@@ -2,5 +2,6 @@ fastapi[standard]
 psycopg2
 sqlalchemy
 passlib
+bcrypt
 pyjwt
 python-decouple

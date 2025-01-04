@@ -1,0 +1,155 @@
+Auction Requests
+{
+    "name": "IPL Auction 2025",
+    "date": "2025-01-01",
+    "purse_amt": 500000000,
+    "min_bid": 200000,
+    "bid_increase_by": 50000
+},
+{
+    "name": "IPL Auction 2026",
+    "date": "2026-01-01",
+    "purse_amt": 500000000,
+    "min_bid": 200000,
+    "bid_increase_by": 50000
+},
+{
+    "name": "IPL Auction 2026",
+    "date": "2026-01-01",
+    "purse_amt": 800000000,
+    "min_bid": 500000,
+    "bid_increase_by": 100000
+},
+
+Player Requests
+{
+    "first_name": "MS",
+    "last_name": "Dhoni",
+    "origin": "Native",
+    "player_type": "Batsman",
+    "points": 99,
+    "base_price": 2000,
+    "auction_id": 1
+},
+{
+    "first_name": "JASPRIT",
+    "last_name": "BUMRAH",
+    "origin": "Native",
+    "player_type": "Bowler",
+    "points": 97,
+    "base_price": 1000,
+    "auction_id": 1
+},
+{
+    "first_name": "PIYUSH",
+    "last_name": "CHAWLA",
+    "origin": "Native",
+    "player_type": "Bowler",
+    "points": 91,
+    "base_price": 500,
+    "auction_id": 1
+},
+{
+    "first_name": "KUMAR",
+    "last_name": "SINGH",
+    "origin": "Native",
+    "player_type": "Batsman",
+    "points": 91,
+    "base_price": 500,
+    "auction_id": 1
+},
+{
+    "first_name": "MOEEN",
+    "last_name": "ALI",
+    "origin": "Overseas",
+    "player_type": "All Rounder",
+    "points": 91,
+    "base_price": 500,
+    "auction_id": 1
+},
+{
+    "first_name": "SHIVAM",
+    "last_name": "DUBE",
+    "origin": "Native",
+    "player_type": "All Rounder",
+    "points": 91,
+    "base_price": 700,
+    "auction_id": 1
+},
+{
+    "first_name": "ROHIT",
+    "last_name": "SHARMA",
+    "origin": "Native",
+    "player_type": "Batsman",
+    "points": 91,
+    "base_price": 700,
+    "auction_id": 1
+},
+{
+    "first_name": "AJINKYA",
+    "last_name": "RAHANE",
+    "origin": "Native",
+    "player_type": "Batsman",
+    "points": 91,
+    "base_price": 700,
+    "auction_id": 1
+},
+
+Team Request
+{
+    "name": "CSK",
+    "auction_id": 1
+},
+{
+    "name": "RCB",
+    "auction_id": 1
+},
+{
+    "name": "MI",
+    "auction_id": 1
+},
+
+
+Summary Request
+{
+    "sold_price": 140000000,
+    "auction_id": 1,
+    "player_id": 1,
+    "team_id": 1
+},
+{
+    "sold_price": 40000000,
+    "auction_id": 1,
+    "player_id": 2,
+    "team_id": 1
+},
+{
+    "sold_price": 9000000,
+    "auction_id": 1,
+    "player_id": 3,
+    "team_id": 3
+},
+{
+    "sold_price": 8000000,
+    "auction_id": 1,
+    "player_id": 4,
+    "team_id": 1
+},
+{
+    "sold_price": 10000000,
+    "auction_id": 1,
+    "player_id": 5,
+    "team_id": 3
+},
+{
+    "sold_price": 30000000,
+    "auction_id": 1,
+    "player_id": 6,
+    "team_id": 3
+},
+{
+    "sold_price": 20000000,
+    "auction_id": 1,
+    "player_id": 7,
+    "team_id": 1
+}

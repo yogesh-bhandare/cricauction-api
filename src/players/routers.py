@@ -2,8 +2,11 @@ from fastapi import APIRouter, Depends, HTTPException, status
 from .schemas import PlayerResponseModel, PlayerRequestModel
 from sqlalchemy.orm import Session
 from ..db.connect import get_db
-from ..db.models import Player
-from typing import List, Optional
+from ..db.models import Player, Auction
+from typing import List
+from ..auth.utils import require_role
+from ..auth.oauth2 import get_current_user
+from ..auth.schemas import TokenData
 
 
 router = APIRouter(
@@ -12,8 +15,11 @@ router = APIRouter(
 )
 
 # Create
-@router.post('/', status_code=status.HTTP_201_CREATED, response_model=PlayerResponseModel)
-def add_player(request:PlayerRequestModel, db:Session=Depends(get_db)):
+@router.post('/', status_code=status.HTTP_201_CREATED, response_model=PlayerResponseModel, dependencies=[Depends(require_role(["admin", "user"]))])
+def add_player(request:PlayerRequestModel, db:Session=Depends(get_db), user:TokenData=Depends(get_current_user)):
+    auction = db.query(Auction).filter(Auction.user_id == user.id, Auction.id == request.auction_id).first()
+    if not auction:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Access")
     new_player = Player(**request.model_dump())
     if not new_player:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Player not added!")
@@ -23,23 +29,32 @@ def add_player(request:PlayerRequestModel, db:Session=Depends(get_db)):
     return new_player
 
 # Read
-@router.get('/', status_code=status.HTTP_200_OK, response_model=List[PlayerResponseModel])
-def get_players(db:Session=Depends(get_db), search:str="", limit:int=10, skip=0):
-    players = db.query(Player).filter(Player.first_name.contains(search)).limit(limit).offset(skip).all()
+@router.get('/{id}', status_code=status.HTTP_200_OK, response_model=List[PlayerResponseModel], dependencies=[Depends(require_role(["admin", "user"]))])
+def get_players(id:int, db:Session=Depends(get_db), user:TokenData=Depends(get_current_user), search:str="", limit:int=10, skip=0):
+    auction = db.query(Auction).filter(Auction.user_id == user.id, Auction.id == id).first()
+    if not auction:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Access!")
+    players = db.query(Player).filter(Player.auction_id == id, Player.first_name.contains(search)).limit(limit).offset(skip).all()
     if not players:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Players not added!")
     return players
 
-@router.get('/{id}', status_code=status.HTTP_200_OK, response_model=PlayerResponseModel)
-def get_player_by_id(id:int, db:Session=Depends(get_db)):
+@router.get('/by/{id}', status_code=status.HTTP_200_OK, response_model=PlayerResponseModel, dependencies=[Depends(require_role(["admin", "user"]))])
+def get_player_by_id(id:int, db:Session=Depends(get_db), user:TokenData=Depends(get_current_user)):
+    auction = db.query(Auction).filter(Auction.user_id == user.id).first()
+    if not auction:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Access!")
     player = db.query(Player).filter(Player.id == id).first()
     if not player:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Player not found!")
     return player
 
 # Update
-@router.put('/{id}', status_code=status.HTTP_201_CREATED, response_model=PlayerResponseModel) 
-def update_player(id:int, request:PlayerRequestModel, db:Session=Depends(get_db)):
+@router.put('/{id}', status_code=status.HTTP_201_CREATED, response_model=PlayerResponseModel, dependencies=[Depends(require_role(["admin", "user"]))]) 
+def update_player(id:int, request:PlayerRequestModel, db:Session=Depends(get_db), user:TokenData=Depends(get_current_user)):
+    auction = db.query(Auction).filter(Auction.user_id == user.id).first()
+    if not auction:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Access!")
     player = db.query(Player).filter(Player.id == id)
     if not player.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Player not found!")
@@ -49,8 +64,11 @@ def update_player(id:int, request:PlayerRequestModel, db:Session=Depends(get_db)
     return update_player
 
 # Delete
-@router.delete('/{id}', status_code=status.HTTP_200_OK)
-def delete_player(id:int, db:Session=Depends(get_db)):
+@router.delete('/{id}', status_code=status.HTTP_200_OK, dependencies=[Depends(require_role(["admin", "user"]))])
+def delete_player(id:int, db:Session=Depends(get_db), user:TokenData=Depends(get_current_user)):
+    auction = db.query(Auction).filter(Auction.user_id == user.id).first()
+    if not auction:
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid Access!")
     player = db.query(Player).filter(Player.id == id)
     if not player.first():
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Player not found!")
