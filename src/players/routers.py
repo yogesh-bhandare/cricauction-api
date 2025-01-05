@@ -27,7 +27,7 @@ def add_player(request:PlayerRequest, db:Session=Depends(get_db), current_user:T
         db.commit()
         db.refresh(new_player)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return new_player
 
 
@@ -40,7 +40,7 @@ def get_players(id:int, db:Session=Depends(get_db), current_user:TokenData=Depen
         if not players:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Players not found!")
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return players
 
 
@@ -51,7 +51,7 @@ def get_player_by_id(id:int, db:Session=Depends(get_db), current_user:TokenData=
         if not player:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Player not found!")
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     verify_auction_access(db, current_user.id, player.auction_id)
     return player
 
@@ -68,7 +68,7 @@ def update_player(id:int, request:PlayerRequest, db:Session=Depends(get_db), cur
         db.commit()
         update_player = player.first()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return update_player
 
 
@@ -83,6 +83,6 @@ def delete_player(id:int, db:Session=Depends(get_db), current_user:TokenData=Dep
         player.delete(synchronize_session=False)
         db.commit()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return {"response":"Player deleted successfully!"}
     

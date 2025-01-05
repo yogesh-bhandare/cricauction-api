@@ -29,7 +29,7 @@ def create_auction(request:AuctionRequest, db:Session=Depends(get_db), current_u
         db.commit()
         db.refresh(new_auction)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return new_auction
 
 
@@ -42,7 +42,7 @@ def get_auction(db:Session=Depends(get_db), current_user:TokenData=Depends(get_c
         if not auctions:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found!")
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return auctions
 
 
@@ -54,7 +54,7 @@ def get_auction_by_id(id:int, db:Session=Depends(get_db), current_user:TokenData
         if not auction:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Not found!")
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return auction
 
 
@@ -70,7 +70,7 @@ def update_auction(id:int, request:AuctionRequest, db:Session=Depends(get_db), c
         db.commit()
         updated_auction = auction.first()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return updated_auction
 
 
@@ -85,5 +85,5 @@ def delete_auction(id:int, db:Session=Depends(get_db), current_user:TokenData=De
         auction.delete(synchronize_session=False)
         db.commit()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return {"response":"Successful!"}

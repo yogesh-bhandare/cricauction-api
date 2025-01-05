@@ -8,10 +8,19 @@ from .summary.routers import router as summary_router
 from .auth.routers import router as login_router
 from .user.routers import router as user_router
 from .dashboard.routers import router as dashboard_router
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
 Base.metadata.create_all(bind=engine)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 app.include_router(user_router)
 app.include_router(login_router)

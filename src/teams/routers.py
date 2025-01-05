@@ -35,7 +35,8 @@ def create_team(id:int, request:TeamRequest, db:Session=Depends(get_db), current
         db.commit()
         db.refresh(new_team)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        db.rollback()
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return new_team
 
 
@@ -48,7 +49,7 @@ def get_teams(id:int, db:Session=Depends(get_db), current_user:TokenData=Depends
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Teams not found!")
         verify_auction_access(db, current_user.id, id)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return teams
 
 
@@ -60,7 +61,7 @@ def get_team_by_id(id:int, db:Session=Depends(get_db), current_user:TokenData=De
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Team not found!")
         verify_auction_access(db, current_user.id, team.auction_id)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return team
 
 
@@ -76,7 +77,7 @@ def update_team(id:int, request:TeamUpdateRequest, db:Session=Depends(get_db), c
         db.commit()
         updated_team = team.first()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return updated_team
 
 
@@ -91,5 +92,5 @@ def delete_team(id:int, db:Session=Depends(get_db), current_user:TokenData=Depen
         team.delete(synchronize_session=False)
         db.commit()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return {"response":"Team Deleted Successfully!"}

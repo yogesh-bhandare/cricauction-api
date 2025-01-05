@@ -37,7 +37,7 @@ def player_sold_team(request:PlayerSoldRequest, db:Session=Depends(get_db), curr
         db.commit()
         db.refresh(new_bid)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return new_bid
 
 
@@ -48,13 +48,9 @@ def team_summary(db: Session = Depends(get_db), current_user:TokenData=Depends(g
         team = db.query(Team).filter(Team.user_id == current_user.id).first()
         if not team:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Team Not Found")
-        
-        sold_players = db.query(Player)\
-            .join(Summary, Summary.player_id == Player.id)\
-            .filter(Summary.team_id == team.id)\
-            .all()
+        sold_players = db.query(Player).join(Summary, Summary.player_id == Player.id).filter(Summary.team_id == team.id).all()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return TeamPlayerSummary(team=team, players=sold_players)
 
 # Read Summay 
@@ -66,7 +62,7 @@ def get_summary(id:int, db:Session=Depends(get_db), current_user:TokenData=Depen
         if not summary:
             raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Summary not found!")
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return summary
 
 
@@ -90,7 +86,7 @@ def update_summary(id:int, request:PlayerSoldRequest, db:Session=Depends(get_db)
         team.remaining_purse -= request.sold_price
         db.commit()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return summary
 
 
@@ -105,7 +101,7 @@ def delete_summary(id:int, db:Session=Depends(get_db), current_user:TokenData=De
         summary.delete(synchronize_session=False)
         db.commit()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return {"response":"Summary deleted successfully!"}
 
     

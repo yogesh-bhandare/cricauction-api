@@ -19,7 +19,7 @@ def dashboard(id:int, db:Session=Depends(get_db), current_user:TokenData=Depends
         teams =  db.query(Team).filter(Team.auction_id == id).all()
         players = db.query(Player).filter(Player.auction_id == id, Player.is_sold == False).all()
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
 
     if not teams:
         raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Team not found!")

@@ -3,6 +3,7 @@ from sqlalchemy.orm import relationship
 from sqlalchemy.types import Enum
 from .connect import Base
 
+
 # Auction Model
 class Auction(Base):
     __tablename__ = "auctions"
@@ -21,6 +22,7 @@ class Auction(Base):
     # Foreign Keys
     user_id = Column(Integer, ForeignKey("users.id", ondelete="CASCADE"))
 
+
 # Players Model
 class Player(Base):
     __tablename__ = "players"
@@ -29,8 +31,8 @@ class Player(Base):
     first_name = Column(String, nullable=False)
     last_name = Column(String, nullable=False)
     img_url = Column(String, nullable=True)
-    origin = Column(Enum("Overseas", "Native", name="player_origin"), nullable=False, default="Native")
-    player_type = Column(Enum("Batsman", "Bowler","All Rounder", "Wicket Keeper", name="player_type"), nullable=False)
+    origin = Column(String, nullable=False, default="Native")
+    player_type = Column(String, nullable=False)
     points = Column(Integer, nullable=False) # points for final results and player stats
     base_price = Column(Integer, nullable=False) # starting bid price
     is_sold = Column(Boolean, nullable=False, default=False) # status to get players sold details
@@ -70,14 +72,15 @@ class Summary(Base):
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
 
     # Foreign Keys
-    auction_id = Column(Integer, ForeignKey("auctions.id", ondelete="CASCADE")) # which auction
-    player_id = Column(Integer, ForeignKey("players.id", ondelete="SET NULL")) # which player sold
-    team_id = Column(Integer, ForeignKey("teams.id", ondelete="SET NULL")) # which team bought
+    auction_id = Column(Integer, ForeignKey("auctions.id", ondelete="CASCADE"), primary_key=True) # which auction
+    player_id = Column(Integer, ForeignKey("players.id", ondelete="SET NULL"), primary_key=True) # which player sold
+    team_id = Column(Integer, ForeignKey("teams.id", ondelete="SET NULL"), primary_key=True) # which team bought
 
     # Relationship
     players = relationship("Player")
     teams = relationship("Team")
     auction = relationship("Auction")
+
 
 # User Model
 class User(Base):
@@ -86,7 +89,7 @@ class User(Base):
     id = Column(Integer, primary_key=True, nullable=False)
     username = Column(String, nullable=False)
     password = Column(String, nullable=False)
-    role = Column(Enum("admin", "user", "team", name="role"), nullable=False)
+    role = Column(String, nullable=False)
     created_at = Column(DateTime, default=func.now(), nullable=False)
     updated_at = Column(DateTime, default=func.now(), onupdate=func.now(), nullable=False)
 

@@ -26,5 +26,5 @@ def user_login(request:OAuth2PasswordRequestForm=Depends(), db:Session=Depends(g
         data = {"user_id":user.id, "user_role":user.role}
         jwt_token = create_access_token(data)
     except Exception as e:
-        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail="Unexpected error occurred!")
+        raise HTTPException(status_code=status.HTTP_500_INTERNAL_SERVER_ERROR, detail=f"Unexpected error occurred: {e}")
     return {"access_token":jwt_token, "token_type":"bearer"}
